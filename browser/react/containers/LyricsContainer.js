@@ -20,15 +20,13 @@ export default class extends Component {
     this.handleSongInput = this.handleSongInput.bind(this);
   }
   componentDidMount() {
-    this.unsubscribe = store.subscribe(() => {
+    store.subscribe(() => {
       this.setState(store.getState());
-      console.log('---------------');
-      console.log(this.state);
 
     });
   }
   componentWillUnmount() {
-    this.unsubscribe();
+    store.unsubscribe();
   }
   handleArtistInput(input) {
     this.setState({artistQuery: input });
@@ -38,14 +36,19 @@ export default class extends Component {
   }
   handleSubmit(e) {
     e.preventDefault();
-    //console.log(this.state);
+    
     if (this.state.artistQuery && this.state.songQuery) {
+      console.log('something', this.state);
       axios.get(`/api/lyrics/${this.state.artistQuery}/${this.state.songQuery}`)
-      .then(res => res.data.lyric)
+      .then(res => {
+        console.log('res: ', res);
+        return res.data.lyric})
       .then(text => {
+        console.log('text:', text);
         store.dispatch(setLyrics(text));
       });
     }
+    console.log(this.state);
   }
 
   render() {
